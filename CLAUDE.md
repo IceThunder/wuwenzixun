@@ -16,11 +16,11 @@ wuwenzixun 是一个企业风险分析助手，通过 Bash 脚本实时抓取企
 ./analyze.sh "公司名称" --depth quick|normal|full
 
 # 单独运行子技能
-cd news && ./fetch.sh "公司名称"
-cd risk && ./check.sh "公司名称"
-cd finance && ./fetch.sh "公司名称"
-cd report && ./generate.sh "公司名称"
-cd outlook && ./predict.sh "公司名称"
+bash news/fetch.sh "公司名称"
+bash risk/check.sh "公司名称"
+bash finance/fetch.sh "公司名称"
+bash report/generate.sh "公司名称"
+bash outlook/predict.sh "公司名称"
 
 # 安装 Python 可选依赖
 pip install -r requirements.txt
@@ -42,13 +42,13 @@ news/fetch.sh → risk/check.sh → finance/fetch.sh → report/generate.sh → 
 
 ## 技术栈
 
-- **主要语言**: Bash 4.0+
-- **核心依赖**: curl（HTTP 请求）、jq（JSON 处理）
-- **可选**: Python 3 + requirements.txt 中的库（高级分析）
+- **主要语言**: Bash 3.2+（兼容 macOS 默认版本）
+- **核心依赖**: curl（HTTP 请求）、grep/sed（文本处理）
+- **可选**: python3（URL 编码，无 python3 时自动回退到 curl 方式）
 
-## 风险评分体系
+## 风险评估维度
 
-综合评分 = 财务风险(30%) + 运营风险(25%) + 法律风险(20%) + 市场风险(15%) + 声誉风险(10%)，权重在 `config.sh` 的 `WEIGHTS` 数组中配置。
+报告按五个维度展示数据覆盖情况：财务风险(30%) + 运营风险(25%) + 法律风险(20%) + 市场风险(15%) + 声誉风险(10%)，权重在 `config.sh` 的 `WEIGHTS` 数组中配置。当前版本尚未实现量化评分，报告中展示的是各维度的数据采集量。
 
 ## 开发约定
 
