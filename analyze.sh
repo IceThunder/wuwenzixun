@@ -1,12 +1,20 @@
 #!/bin/bash
-
 # wuwenzixun - 企业风险分析主入口
-# 功能：整合所有子技能，生成完整分析报告
-
-COMPANY="${1:-}"
-DEPTH="${2:-normal}"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+source "${SCRIPT_DIR}/utils.sh"
+
+# 解析参数
+COMPANY=""
+DEPTH="$ANALYSIS_DEPTH"
+
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --depth) DEPTH="$2"; shift 2 ;;
+        --help) COMPANY=""; break ;;
+        *) [[ -z "$COMPANY" ]] && COMPANY="$1"; shift ;;
+    esac
+done
 
 # 颜色定义
 RED='\033[0;31m'
@@ -39,7 +47,7 @@ show_help() {
     echo "  $0 \"阿里巴巴\" --full"
 }
 
-if [[ "$1" == "--help" || -z "$COMPANY" ]]; then
+if [[ -z "$COMPANY" ]]; then
     show_help
     exit 0
 fi
@@ -53,33 +61,28 @@ echo -e "  ⏰ 分析时间: $(date '+%Y-%m-%d %H:%M:%S')"
 echo ""
 
 # 步骤1: 新闻抓取
-print_header "📰 步骤1/5 - 新闻资讯抓取"
-cd "$SCRIPT_DIR/news"
-./fetch.sh "$COMPANY"
+print_header "步骤1/5 - 新闻资讯抓取"
+bash "${SCRIPT_DIR}/news/fetch.sh" "$COMPANY"
 echo ""
 
 # 步骤2: 风险检索
-print_header "⚠️  步骤2/5 - 风险信息检索"
-cd "$SCRIPT_DIR/risk"
-./check.sh "$COMPANY"
+print_header "步骤2/5 - 风险信息检索"
+bash "${SCRIPT_DIR}/risk/check.sh" "$COMPANY"
 echo ""
 
 # 步骤3: 财务抓取
-print_header "💰 步骤3/5 - 财务数据抓取"
-cd "$SCRIPT_DIR/finance"
-./fetch.sh "$COMPANY"
+print_header "步骤3/5 - 财务数据抓取"
+bash "${SCRIPT_DIR}/finance/fetch.sh" "$COMPANY"
 echo ""
 
 # 步骤4: 报告生成
-print_header "📋 步骤4/5 - 风险分析报告"
-cd "$SCRIPT_DIR/report"
-./generate.sh "$COMPANY"
+print_header "步骤4/5 - 风险分析报告"
+bash "${SCRIPT_DIR}/report/generate.sh" "$COMPANY"
 echo ""
 
 # 步骤5: 未来展望
-print_header "📈 步骤5/5 - 未来展望建议"
-cd "$SCRIPT_DIR/outlook"
-./predict.sh "$COMPANY"
+print_header "步骤5/5 - 未来展望建议"
+bash "${SCRIPT_DIR}/outlook/predict.sh" "$COMPANY"
 echo ""
 
 print_header "✅ 分析完成"
